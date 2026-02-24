@@ -107,7 +107,7 @@ export function ShopOwnersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
@@ -124,7 +124,7 @@ export function ShopOwnersPage() {
             <CardDescription>Register with email/password and optionally assign a shop.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreateShopOwner} className="space-y-4">
+            <form onSubmit={handleCreateShopOwner} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="owner-email">Email</Label>
                 <Input
@@ -174,7 +174,7 @@ export function ShopOwnersPage() {
             <CardDescription>Add an existing user (by phone) to a shop.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAddOwnerToShop} className="space-y-4">
+            <form onSubmit={handleAddOwnerToShop} className="space-y-5">
               <div className="space-y-2">
                 <Label>Shop</Label>
                 <Select value={addOwnerShopId} onValueChange={setAddOwnerShopId}>

@@ -34,8 +34,8 @@ export function DashboardLayout() {
           <SidebarTrigger onClick={() => setMobileMenuOpen(true)} />
           <div className="flex-1" />
         </header>
-        <main className="flex-1 overflow-auto p-5 md:p-7 lg:p-9">
-          <div className="mx-auto max-w-4xl">
+        <main className="flex-1 overflow-auto p-6 md:p-8 lg:p-10">
+          <div className="mx-auto w-full max-w-6xl">
             <Outlet />
           </div>
         </main>

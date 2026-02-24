@@ -87,7 +87,7 @@ export function OffersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
@@ -104,7 +104,7 @@ export function OffersPage() {
           <CardDescription>Create an offer for a branch.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleCreateOffer} className="space-y-4">
+          <form onSubmit={handleCreateOffer} className="space-y-5">
             <div className="space-y-2">
               <Label>Branch</Label>
               <Select value={offerBranchId} onValueChange={setOfferBranchId}>

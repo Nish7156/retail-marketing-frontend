@@ -98,7 +98,7 @@ export function CustomersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
@@ -121,7 +121,7 @@ export function CustomersPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreate} className="space-y-4">
+            <form onSubmit={handleCreate} className="space-y-5">
               {!isBranchStaff && (
                 <div className="space-y-2">
                   <Label>Branch</Label>

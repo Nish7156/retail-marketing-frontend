@@ -132,7 +132,7 @@ export function BranchesPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
@@ -149,7 +149,7 @@ export function BranchesPage() {
           <CardDescription>Add a branch to a shop.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleCreateBranch} className="space-y-4">
+          <form onSubmit={handleCreateBranch} className="space-y-5">
             {isSuperAdmin && (
               <div className="space-y-2">
                 <Label>Shop</Label>
@@ -224,7 +224,7 @@ export function BranchesPage() {
             <CardDescription>Create a branch-level login. They can add customers for that branch only.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreateBranchStaff} className="space-y-4">
+            <form onSubmit={handleCreateBranchStaff} className="space-y-5">
               <div className="space-y-2">
                 <Label>Branch</Label>
                 <Select value={staffBranchId} onValueChange={setStaffBranchId} required>

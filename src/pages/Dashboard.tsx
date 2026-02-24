@@ -39,7 +39,7 @@ export function Dashboard() {
   );
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export function Dashboard() {
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
         variants={container}
         initial="hidden"
         animate="show"
@@ -64,16 +64,16 @@ export function Dashboard() {
         {visibleCards.map((card) => (
           <motion.div key={card.path} variants={item}>
             <Link to={card.path} className="block h-full group">
-              <div className="card-hover flex h-full min-h-[160px] flex-col justify-between gap-4 rounded-2xl border border-border/80 bg-card p-6 shadow-md">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-inner">
-                    <card.icon className="h-6 w-6 text-primary" />
+              <div className="card-hover flex h-full min-h-[200px] flex-col justify-between gap-5 rounded-2xl border border-border/80 bg-card p-7 shadow-md">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-inner">
+                    <card.icon className="h-7 w-7 text-primary" />
                   </div>
                   <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-primary" />
                 </div>
-                <div className="min-w-0">
-                  <p className="font-semibold text-foreground">{card.label}</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{card.desc}</p>
+                <div className="min-w-0 space-y-1">
+                  <p className="text-base font-semibold leading-tight text-foreground">{card.label}</p>
+                  <p className="text-sm leading-snug text-muted-foreground">{card.desc}</p>
                 </div>
               </div>
             </Link>
@@ -86,7 +86,7 @@ export function Dashboard() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm"
+          className="rounded-2xl border border-border/80 bg-card p-8 shadow-sm"
         >
           <p className="text-muted-foreground">You are logged in. Contact an admin for shop access.</p>
         </motion.div>

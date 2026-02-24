@@ -84,7 +84,7 @@
     @apply transition-all duration-300 ease-out hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-0.5;
   }
   .card-grid {
-    @apply grid grid-cols-1 gap-6 md:grid-cols-2;
+    @apply grid grid-cols-1 gap-8 md:grid-cols-2;
   }
   .card-grid-single {
     @apply grid grid-cols-1;
@@ -93,7 +93,7 @@
     @apply overflow-hidden rounded-2xl border border-border/60 bg-muted/20 shadow-sm;
   }
   .list-card li {
-    @apply flex items-center justify-between border-b border-border/50 px-5 py-4 last:border-b-0 transition-colors hover:bg-muted/40;
+    @apply flex items-center justify-between gap-4 border-b border-border/50 px-6 py-5 last:border-b-0 transition-colors hover:bg-muted/40;
   }
   .list-card li:first-child {
     @apply rounded-t-2xl;

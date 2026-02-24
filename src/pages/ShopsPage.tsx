@@ -63,7 +63,7 @@ export function ShopsPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-8"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
@@ -80,7 +80,7 @@ export function ShopsPage() {
             <CardDescription>Add a new shop to the system.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreateShop} className="space-y-4">
+            <form onSubmit={handleCreateShop} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="shop-name">Shop name</Label>
                 <Input
