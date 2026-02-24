@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -40,9 +41,12 @@ export function ShopsPage() {
       await api.post("/shops", { name: shopName });
       setShopName("");
       setMessage("Shop created.");
+      toast.success("Shop created.");
       loadShops();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to create shop");
+      const msg = err instanceof Error ? err.message : "Failed to create shop";
+      setMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

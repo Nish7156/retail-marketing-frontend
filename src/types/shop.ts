@@ -27,3 +27,13 @@ export interface ShopOwner {
   shops: { id: string; name: string }[];
   createdAt: string;
 }
+
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  branchId: string;
+  branch?: { id: string; name: string; location: string };
+  createdAt: string;
+}

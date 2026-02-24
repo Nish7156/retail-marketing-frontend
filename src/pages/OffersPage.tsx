@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -63,9 +64,12 @@ export function OffersPage() {
       setOfferDescription("");
       setOfferBranchId("");
       setMessage("Offer created.");
+      toast.success("Offer created.");
       loadOffers();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to create offer");
+      const msg = err instanceof Error ? err.message : "Failed to create offer";
+      setMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

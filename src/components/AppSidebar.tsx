@@ -8,17 +8,23 @@ import {
   Tag,
   LogOut,
   Menu,
+  UserPlus,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const adminNavItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
   { label: "Shops", icon: Store, path: "/shops" },
   { label: "Shop Owners", icon: Users, path: "/shop-owners" },
   { label: "Branches", icon: MapPin, path: "/branches" },
   { label: "Offers", icon: Tag, path: "/offers" },
+];
+
+const branchStaffNavItems = [
+  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "Customers", icon: UserPlus, path: "/customers" },
 ];
 
 interface AppSidebarProps {
@@ -29,10 +35,11 @@ interface AppSidebarProps {
 
 export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
   const { user, logout } = useAuth();
+  const navItems = user?.role === "BRANCH_STAFF" ? branchStaffNavItems : adminNavItems;
 
   const content = (
-    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="relative flex h-16 items-center gap-3 border-b border-white/10 px-5">
+    <div className="flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground">
+      <div className="relative flex h-16 shrink-0 items-center gap-3 border-b border-white/10 px-5">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-purple-600 text-primary-foreground shadow-lg shadow-primary/30">
           <LayoutDashboard className="h-5 w-5" />
         </div>
@@ -42,8 +49,8 @@ export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-60" />
       </div>
-      <nav className="flex-1 space-y-1 p-3">
-        {navItems.map((item, i) => (
+      <nav className="flex-1 min-h-0 overflow-y-auto space-y-1 p-3">
+        {navItems.map((item) => (
           <NavLink
             key={item.label}
             to={item.path}
@@ -72,7 +79,7 @@ export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
           </NavLink>
         ))}
       </nav>
-      <div className="border-t border-white/10 p-3">
+      <div className="shrink-0 border-t border-white/10 p-3">
         <div className="mb-2 rounded-xl bg-white/5 px-3 py-2.5 text-xs">
           <p className="truncate font-medium text-white/90">{user?.phone ?? user?.email ?? "—"}</p>
           <p className="truncate text-white/50">{user?.role}</p>
@@ -95,7 +102,7 @@ export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
   }
 
   return (
-    <aside className="hidden shrink-0 flex-col border-r border-white/5 bg-sidebar md:flex md:w-60 shadow-xl shadow-black/20">
+    <aside className="flex h-screen flex-col border-r border-white/5 bg-sidebar shadow-xl shadow-black/20">
       {content}
     </aside>
   );

@@ -8,6 +8,7 @@ import { ShopsPage } from "@/pages/ShopsPage";
 import { ShopOwnersPage } from "@/pages/ShopOwnersPage";
 import { BranchesPage } from "@/pages/BranchesPage";
 import { OffersPage } from "@/pages/OffersPage";
+import { CustomersPage } from "@/pages/CustomersPage";
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ function AppContent() {
           <Route path="shop-owners" element={<ShopOwnersPage />} />
           <Route path="branches" element={<BranchesPage />} />
           <Route path="offers" element={<OffersPage />} />
+          <Route path="customers" element={<CustomersPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

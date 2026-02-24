@@ -13,7 +13,9 @@ export function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <AppSidebar isMobile={false} />
+      <div className="fixed inset-y-0 left-0 z-30 hidden w-60 md:block">
+        <AppSidebar isMobile={false} />
+      </div>
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="left" className="w-64 p-0 border-0 bg-sidebar text-sidebar-foreground">
           <SheetHeader className="sr-only">
@@ -26,13 +28,13 @@ export function DashboardLayout() {
           />
         </SheetContent>
       </Sheet>
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 pl-0 md:pl-60">
         <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           <SidebarTrigger onClick={() => setMobileMenuOpen(true)} />
           <div className="flex-1" />
         </header>
-        <main className="flex-1 p-5 md:p-7 lg:p-9">
+        <main className="flex-1 overflow-auto p-5 md:p-7 lg:p-9">
           <div className="mx-auto max-w-4xl">
             <Outlet />
           </div>

@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Store, Users, MapPin, Tag, ArrowRight } from "lucide-react";
+import { Store, Users, MapPin, Tag, ArrowRight, UserPlus } from "lucide-react";
 
 const navCards = [
   { label: "Shops", desc: "Create and manage shops", icon: Store, path: "/shops", role: "SUPERADMIN" as const },
   { label: "Shop Owners", desc: "Manage owners and assign to shops", icon: Users, path: "/shop-owners", role: "SUPERADMIN" as const },
   { label: "Branches", desc: "Add branches (name + location)", icon: MapPin, path: "/branches", role: "STORE_ADMIN" as const },
   { label: "Offers", desc: "Create offers for branches", icon: Tag, path: "/offers", role: "STORE_ADMIN" as const },
+  { label: "Customers", desc: "Add and manage customers for your branch", icon: UserPlus, path: "/customers", role: "BRANCH_STAFF" as const },
 ];
 
 const container = {
@@ -28,9 +29,13 @@ export function Dashboard() {
   const displayUser = user?.phone ?? user?.email ?? "—";
   const isSuperAdmin = user?.role === "SUPERADMIN";
   const isStoreAdmin = user?.role === "STORE_ADMIN";
+  const isBranchStaff = user?.role === "BRANCH_STAFF";
 
   const visibleCards = navCards.filter(
-    (c) => (c.role === "SUPERADMIN" && isSuperAdmin) || (c.role === "STORE_ADMIN" && (isSuperAdmin || isStoreAdmin))
+    (c) =>
+      (c.role === "SUPERADMIN" && isSuperAdmin) ||
+      (c.role === "STORE_ADMIN" && (isSuperAdmin || isStoreAdmin)) ||
+      (c.role === "BRANCH_STAFF" && isBranchStaff)
   );
 
   return (
@@ -76,7 +81,7 @@ export function Dashboard() {
         ))}
       </motion.div>
 
-      {!isSuperAdmin && !isStoreAdmin && (
+      {!isSuperAdmin && !isStoreAdmin && !isBranchStaff && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

@@ -1,4 +1,4 @@
-export type Role = 'SUPERADMIN' | 'STORE_ADMIN' | 'USER';
+export type Role = 'SUPERADMIN' | 'STORE_ADMIN' | 'BRANCH_STAFF' | 'USER';
 
 export interface User {
   id: string;
@@ -6,6 +6,8 @@ export interface User {
   email?: string | null;
   role: Role;
   shopIds?: string[];
+  branchId?: string | null;
+  branch?: { id: string; name: string; location: string };
   createdAt?: string;
 }
 

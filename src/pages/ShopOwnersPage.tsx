@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -64,9 +65,12 @@ export function ShopOwnersPage() {
       setOwnerPassword("");
       setOwnerShopId("");
       setMessage("Shop owner created.");
+      toast.success("Shop owner created.");
       loadShopOwners();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to create shop owner");
+      const msg = err instanceof Error ? err.message : "Failed to create shop owner";
+      setMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -81,9 +85,12 @@ export function ShopOwnersPage() {
       setAddOwnerPhone("");
       setAddOwnerShopId("");
       setMessage("Owner added to shop.");
+      toast.success("Owner added to shop.");
       loadShopOwners();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to add owner to shop");
+      const msg = err instanceof Error ? err.message : "Failed to add owner to shop";
+      setMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
