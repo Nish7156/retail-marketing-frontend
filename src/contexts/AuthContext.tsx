@@ -12,7 +12,7 @@ import type { User } from '../types/auth';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  sendOtp: (phone: string) => Promise<void>;
+  sendOtp: (phone: string) => Promise<{ otp?: string }>;
   verifyOtp: (phone: string, code: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, role?: string) => Promise<void>;
@@ -42,7 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshUser]);
 
   const sendOtp = useCallback(async (phone: string) => {
-    await api.post('/auth/send-otp', { phone });
+    const res = await api.post<{ ok: boolean; otp?: string }>('/auth/send-otp', { phone });
+    return { otp: res.otp };
   }, []);
 
   const verifyOtp = useCallback(async (phone: string, code: string) => {
