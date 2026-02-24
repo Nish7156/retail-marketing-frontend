@@ -2,9 +2,10 @@ export type Role = 'SUPERADMIN' | 'STORE_ADMIN' | 'USER';
 
 export interface User {
   id: string;
-  email: string;
+  phone: string;
+  email?: string | null;
   role: Role;
-  storeId?: string | null;
+  shopIds?: string[];
   createdAt?: string;
 }
 
@@ -17,7 +18,16 @@ export interface RegisterBody {
   email: string;
   password: string;
   role?: Role;
-  storeId?: string;
+  shopId?: string;
+}
+
+export interface SendOtpBody {
+  phone: string;
+}
+
+export interface VerifyOtpBody {
+  phone: string;
+  code: string;
 }
 
 export interface AuthResponse {

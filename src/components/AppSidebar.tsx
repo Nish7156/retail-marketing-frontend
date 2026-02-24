@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard },
-  { label: "Stores", icon: Store },
-  { label: "Store Owners", icon: Users },
+  { label: "Shops", icon: Store },
+  { label: "Shop Owners", icon: Users },
 ];
 
 interface AppSidebarProps {
@@ -67,7 +67,7 @@ export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="truncate font-medium text-foreground">{user?.email}</p>
+          <p className="truncate font-medium text-foreground">{user?.phone ?? user?.email ?? "—"}</p>
           <p className="truncate">{user?.role}</p>
         </motion.div>
         <Button

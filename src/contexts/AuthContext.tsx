@@ -12,6 +12,8 @@ import type { User } from '../types/auth';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  sendOtp: (phone: string) => Promise<void>;
+  verifyOtp: (phone: string, code: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, role?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -38,6 +40,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);
+
+  const sendOtp = useCallback(async (phone: string) => {
+    await api.post('/auth/send-otp', { phone });
+  }, []);
+
+  const verifyOtp = useCallback(async (phone: string, code: string) => {
+    const res = await api.post<{ user: User }>('/auth/verify-otp', { phone, code });
+    setUser(res.user);
+  }, []);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -69,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, refreshUser }}
+      value={{ user, loading, sendOtp, verifyOtp, login, register, logout, refreshUser }}
     >
       {children}
     </AuthContext.Provider>
