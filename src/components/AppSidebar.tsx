@@ -13,18 +13,15 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Role } from "@/types/auth";
 
-const adminNavItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { label: "Shops", icon: Store, path: "/shops" },
-  { label: "Shop Owners", icon: Users, path: "/shop-owners" },
-  { label: "Branches", icon: MapPin, path: "/branches" },
-  { label: "Offers", icon: Tag, path: "/offers" },
-];
-
-const branchStaffNavItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { label: "Customers", icon: UserPlus, path: "/customers" },
+const navItemsConfig: { label: string; icon: typeof LayoutDashboard; path: string; allowedRoles: Role[] }[] = [
+  { label: "Dashboard", icon: LayoutDashboard, path: "/", allowedRoles: ["SUPERADMIN", "STORE_ADMIN", "BRANCH_STAFF", "USER"] },
+  { label: "Shops", icon: Store, path: "/shops", allowedRoles: ["SUPERADMIN"] },
+  { label: "Shop Owners", icon: Users, path: "/shop-owners", allowedRoles: ["SUPERADMIN"] },
+  { label: "Branches", icon: MapPin, path: "/branches", allowedRoles: ["SUPERADMIN", "STORE_ADMIN"] },
+  { label: "Offers", icon: Tag, path: "/offers", allowedRoles: ["SUPERADMIN", "STORE_ADMIN"] },
+  { label: "Customers", icon: UserPlus, path: "/customers", allowedRoles: ["SUPERADMIN", "STORE_ADMIN", "BRANCH_STAFF"] },
 ];
 
 interface AppSidebarProps {
@@ -35,7 +32,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
   const { user, logout } = useAuth();
-  const navItems = user?.role === "BRANCH_STAFF" ? branchStaffNavItems : adminNavItems;
+  const navItems = navItemsConfig.filter((item) => user?.role && item.allowedRoles.includes(user.role));
 
   const content = (
     <div className="flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground">

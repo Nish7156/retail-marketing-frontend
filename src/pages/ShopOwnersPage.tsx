@@ -27,8 +27,7 @@ export function ShopOwnersPage() {
   const { user } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [shopOwners, setShopOwners] = useState<ShopOwner[]>([]);
-  const [ownerEmail, setOwnerEmail] = useState("");
-  const [ownerPassword, setOwnerPassword] = useState("");
+  const [ownerPhone, setOwnerPhone] = useState("");
   const [ownerShopId, setOwnerShopId] = useState("");
   const [addOwnerShopId, setAddOwnerShopId] = useState("");
   const [addOwnerPhone, setAddOwnerPhone] = useState("");
@@ -57,14 +56,12 @@ export function ShopOwnersPage() {
     setLoading(true);
     try {
       await api.post("/auth/store-owners", {
-        email: ownerEmail,
-        password: ownerPassword,
+        phone: ownerPhone,
         shopId: ownerShopId || undefined,
       });
-      setOwnerEmail("");
-      setOwnerPassword("");
+      setOwnerPhone("");
       setOwnerShopId("");
-      setMessage("Shop owner created.");
+      setMessage("Shop owner created. They can sign in with this phone number (OTP).");
       toast.success("Shop owner created.");
       loadShopOwners();
     } catch (err) {
@@ -114,36 +111,25 @@ export function ShopOwnersPage() {
     >
       <div>
         <h1 className="page-title">Shop Owners</h1>
-        <p className="page-desc">Create owners and add existing users to shops.</p>
+        <p className="page-desc">Create owners by phone number and add existing users (by phone) to shops. Phone is used for login and everywhere.</p>
       </div>
 
       <div className="card-grid">
         <Card className="card-hover">
           <CardHeader>
             <CardTitle>Create Shop Owner</CardTitle>
-            <CardDescription>Register with email/password and optionally assign a shop.</CardDescription>
+            <CardDescription>Create an owner by phone number. They sign in with this phone (OTP) and use it everywhere.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreateShopOwner} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="owner-email">Email</Label>
+                <Label htmlFor="owner-phone">Phone number</Label>
                 <Input
-                  id="owner-email"
-                  type="email"
-                  placeholder="Email"
-                  value={ownerEmail}
-                  onChange={(e) => setOwnerEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="owner-password">Password</Label>
-                <Input
-                  id="owner-password"
-                  type="password"
-                  placeholder="Password"
-                  value={ownerPassword}
-                  onChange={(e) => setOwnerPassword(e.target.value)}
+                  id="owner-phone"
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  value={ownerPhone}
+                  onChange={(e) => setOwnerPhone(e.target.value)}
                   required
                 />
               </div>
@@ -171,7 +157,7 @@ export function ShopOwnersPage() {
         <Card className="card-hover flex flex-col">
           <CardHeader>
             <CardTitle>Add Owner to Shop</CardTitle>
-            <CardDescription>Add an existing user (by phone) to a shop.</CardDescription>
+            <CardDescription>Add an existing user by phone number to a shop. They sign in with that phone (OTP).</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAddOwnerToShop} className="space-y-5">
@@ -219,7 +205,7 @@ export function ShopOwnersPage() {
             ) : (
               shopOwners.map((o) => (
                 <li key={o.id} className="text-sm">
-                  <span className="font-medium text-foreground">{o.email ?? o.phone}</span>
+                  <span className="font-medium text-foreground">{o.phone}{o.email ? ` · ${o.email}` : ""}</span>
                   <span className="text-muted-foreground">
                     {o.shops?.length ? o.shops.map((s) => s.name).join(", ") : "No shops"}
                   </span>

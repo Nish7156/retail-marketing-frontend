@@ -81,9 +81,9 @@ export function Login() {
           <Card className="glass border-primary/20 shadow-2xl shadow-primary/10">
             <CardHeader className="space-y-1 text-center pb-2">
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                Sign in with email
+                Sign in with email (optional)
               </CardTitle>
-              <CardDescription>Use your email and password</CardDescription>
+              <CardDescription>Use your email and password if you have an account</CardDescription>
             </CardHeader>
             <form onSubmit={handleEmailLogin}>
               <CardContent className="space-y-4">
@@ -149,10 +149,10 @@ export function Login() {
         <Card className="glass border-primary/20 shadow-2xl shadow-primary/10">
           <CardHeader className="space-y-1 text-center pb-2">
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              Welcome back
+              Sign in with phone (OTP)
             </CardTitle>
             <CardDescription>
-              Sign in with your phone number (OTP) or use email
+              Enter your phone number to get a one-time code. Email and password sign-in is optional.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -229,10 +229,10 @@ export function Login() {
             <Button
               type="button"
               variant="ghost"
-              className="w-full text-muted-foreground hover:bg-primary/10 hover:text-primary"
+              className="w-full text-muted-foreground hover:bg-primary/10 hover:text-primary text-sm"
               onClick={() => setUseEmail(true)}
             >
-              Sign in with email & password
+              Optional: Sign in with email & password
             </Button>
           </CardContent>
         </Card>

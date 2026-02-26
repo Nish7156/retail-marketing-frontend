@@ -9,6 +9,13 @@ import { ShopOwnersPage } from "@/pages/ShopOwnersPage";
 import { BranchesPage } from "@/pages/BranchesPage";
 import { OffersPage } from "@/pages/OffersPage";
 import { CustomersPage } from "@/pages/CustomersPage";
+import type { Role } from "@/types/auth";
+
+function ProtectedRoute({ allowedRoles, children }: { allowedRoles: Role[]; children: React.ReactNode }) {
+  const { user } = useAuth();
+  if (!user || !allowedRoles.includes(user.role)) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -36,11 +43,11 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path="shops" element={<ShopsPage />} />
-          <Route path="shop-owners" element={<ShopOwnersPage />} />
-          <Route path="branches" element={<BranchesPage />} />
-          <Route path="offers" element={<OffersPage />} />
-          <Route path="customers" element={<CustomersPage />} />
+          <Route path="shops" element={<ProtectedRoute allowedRoles={["SUPERADMIN"]}><ShopsPage /></ProtectedRoute>} />
+          <Route path="shop-owners" element={<ProtectedRoute allowedRoles={["SUPERADMIN"]}><ShopOwnersPage /></ProtectedRoute>} />
+          <Route path="branches" element={<ProtectedRoute allowedRoles={["SUPERADMIN", "STORE_ADMIN"]}><BranchesPage /></ProtectedRoute>} />
+          <Route path="offers" element={<ProtectedRoute allowedRoles={["SUPERADMIN", "STORE_ADMIN"]}><OffersPage /></ProtectedRoute>} />
+          <Route path="customers" element={<ProtectedRoute allowedRoles={["SUPERADMIN", "STORE_ADMIN", "BRANCH_STAFF"]}><CustomersPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
