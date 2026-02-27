@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
+import { getPhoneForApi, PHONE_DEFAULT, phoneErrorMessage } from "@/lib/phone";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -27,10 +28,10 @@ export function ShopOwnersPage() {
   const { user } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [shopOwners, setShopOwners] = useState<ShopOwner[]>([]);
-  const [ownerPhone, setOwnerPhone] = useState("");
+  const [ownerPhone, setOwnerPhone] = useState(PHONE_DEFAULT);
   const [ownerShopId, setOwnerShopId] = useState("");
   const [addOwnerShopId, setAddOwnerShopId] = useState("");
-  const [addOwnerPhone, setAddOwnerPhone] = useState("");
+  const [addOwnerPhone, setAddOwnerPhone] = useState(PHONE_DEFAULT);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -53,13 +54,19 @@ export function ShopOwnersPage() {
   const handleCreateShopOwner = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    const phoneErr = phoneErrorMessage(ownerPhone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
     setLoading(true);
     try {
       await api.post("/auth/store-owners", {
-        phone: ownerPhone,
+        phone: getPhoneForApi(ownerPhone),
         shopId: ownerShopId || undefined,
       });
-      setOwnerPhone("");
+      setOwnerPhone(PHONE_DEFAULT);
       setOwnerShopId("");
       setMessage("Shop owner created. They can sign in with this phone number (OTP).");
       toast.success("Shop owner created.");
@@ -76,10 +83,16 @@ export function ShopOwnersPage() {
   const handleAddOwnerToShop = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    const phoneErr = phoneErrorMessage(addOwnerPhone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
     setLoading(true);
     try {
-      await api.post(`/shops/${addOwnerShopId}/owners`, { phone: addOwnerPhone });
-      setAddOwnerPhone("");
+      await api.post(`/shops/${addOwnerShopId}/owners`, { phone: getPhoneForApi(addOwnerPhone) });
+      setAddOwnerPhone(PHONE_DEFAULT);
       setAddOwnerShopId("");
       setMessage("Owner added to shop.");
       toast.success("Owner added to shop.");
@@ -124,12 +137,10 @@ export function ShopOwnersPage() {
             <form onSubmit={handleCreateShopOwner} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="owner-phone">Phone number</Label>
-                <Input
+                <PhoneInput
                   id="owner-phone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
                   value={ownerPhone}
-                  onChange={(e) => setOwnerPhone(e.target.value)}
+                  onChange={setOwnerPhone}
                   required
                 />
               </div>
@@ -176,12 +187,10 @@ export function ShopOwnersPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="add-owner-phone">Phone</Label>
-                <Input
+                <PhoneInput
                   id="add-owner-phone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
                   value={addOwnerPhone}
-                  onChange={(e) => setAddOwnerPhone(e.target.value)}
+                  onChange={setAddOwnerPhone}
                   required
                 />
               </div>

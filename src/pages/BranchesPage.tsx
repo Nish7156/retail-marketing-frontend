@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
+import { getPhoneForApi, PHONE_DEFAULT, phoneErrorMessage } from "@/lib/phone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -40,7 +42,7 @@ export function BranchesPage() {
   const [branchLocation, setBranchLocation] = useState("");
   const [branchShopId, setBranchShopId] = useState("");
   const [staffBranchId, setStaffBranchId] = useState("");
-  const [staffPhone, setStaffPhone] = useState("");
+  const [staffPhone, setStaffPhone] = useState(PHONE_DEFAULT);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
@@ -98,14 +100,20 @@ export function BranchesPage() {
   const handleCreateBranchStaff = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    const phoneErr = phoneErrorMessage(staffPhone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
     setStaffLoading(true);
     try {
       await api.post("/auth/branch-staff", {
         branchId: staffBranchId,
-        phone: staffPhone,
+        phone: getPhoneForApi(staffPhone),
       });
       setStaffBranchId("");
-      setStaffPhone("");
+      setStaffPhone(PHONE_DEFAULT);
       setMessage("Branch staff created. They sign in with this phone (OTP) and can add end users (name + phone) for that branch.");
       toast.success("Branch staff created.");
       loadBranchStaff();
@@ -240,12 +248,10 @@ export function BranchesPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="staff-phone">Phone number</Label>
-                <Input
+                <PhoneInput
                   id="staff-phone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
                   value={staffPhone}
-                  onChange={(e) => setStaffPhone(e.target.value)}
+                  onChange={setStaffPhone}
                   required
                 />
               </div>

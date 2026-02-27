@@ -2,8 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { getPhoneForApi, PHONE_DEFAULT, phoneErrorMessage } from "@/lib/phone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -19,7 +21,7 @@ type Step = "phone" | "otp" | "email";
 export function Login() {
   const { sendOtp, verifyOtp, login } = useAuth();
   const [step, setStep] = useState<Step>("phone");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(PHONE_DEFAULT);
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,9 +32,14 @@ export function Login() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const msg = phoneErrorMessage(phone);
+    if (msg) {
+      setError(msg);
+      return;
+    }
     setLoading(true);
     try {
-      const { otp } = await sendOtp(phone);
+      const { otp } = await sendOtp(getPhoneForApi(phone));
       setStep("otp");
       setOtp("");
       if (otp) toast.success(`Your OTP: ${otp}`, { duration: 15000 });
@@ -48,7 +55,7 @@ export function Login() {
     setError("");
     setLoading(true);
     try {
-      await verifyOtp(phone, otp);
+      await verifyOtp(getPhoneForApi(phone), otp);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid or expired OTP");
     } finally {
@@ -166,12 +173,10 @@ export function Login() {
               <form onSubmit={handleSendOtp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone number</Label>
-                  <Input
+                  <PhoneInput
                     id="phone"
-                    type="tel"
-                    placeholder="+91 98765 43210"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={setPhone}
                     required
                   />
                 </div>
@@ -184,7 +189,7 @@ export function Login() {
             {step === "otp" && (
               <form onSubmit={handleVerifyOtp} className="space-y-4">
                 <p className="text-muted-foreground text-sm">
-                  OTP sent to {phone}. Check the toast for your code.
+                  OTP sent to {getPhoneForApi(phone)}. Check the toast for your code.
                 </p>
                 <div className="space-y-2">
                   <Label htmlFor="otp">Enter OTP</Label>

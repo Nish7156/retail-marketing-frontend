@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
+import { getPhoneForApi, PHONE_DEFAULT, phoneErrorMessage } from "@/lib/phone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -28,7 +30,7 @@ export function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(PHONE_DEFAULT);
   const [email, setEmail] = useState("");
   const [branchId, setBranchId] = useState("");
   const [message, setMessage] = useState("");
@@ -63,16 +65,22 @@ export function CustomersPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    const phoneErr = phoneErrorMessage(phone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
     setLoading(true);
     try {
       await api.post("/customers", {
         branchId: effectiveBranchId,
         name,
-        phone,
+        phone: getPhoneForApi(phone),
         email: email || undefined,
       });
       setName("");
-      setPhone("");
+      setPhone(PHONE_DEFAULT);
       setEmail("");
       if (!isBranchStaff) setBranchId("");
       setMessage("Customer added.");
@@ -151,12 +159,10 @@ export function CustomersPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cust-phone">Phone</Label>
-                <Input
+                <PhoneInput
                   id="cust-phone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={setPhone}
                   required
                 />
               </div>
