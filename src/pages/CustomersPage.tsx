@@ -107,8 +107,8 @@ export function CustomersPage() {
         <h1 className="page-title">Customers</h1>
         <p className="page-desc">
           {isBranchStaff && user?.branch
-            ? `Add and view customers for ${user.branch.name} (${user.branch.location}).`
-            : "Add and view customers by branch."}
+            ? `Add end users (name + phone) for your branch ${user.branch.name}. Relation: Store → Branch → Customers.`
+            : "Add end users (name + phone) by branch. Relation: Store → Branch → Customers."}
         </p>
       </div>
 
@@ -117,7 +117,7 @@ export function CustomersPage() {
           <CardHeader>
             <CardTitle>Add Customer</CardTitle>
             <CardDescription>
-              {isBranchStaff ? "Add a customer to your branch." : "Select a branch and add a customer."}
+              {isBranchStaff ? "Add an end user (name + phone) to your branch." : "Select a branch and add an end user (name + phone)."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -181,7 +181,7 @@ export function CustomersPage() {
           <CardHeader>
             <CardTitle>All Customers</CardTitle>
             <CardDescription>
-              {isBranchStaff ? "Customers at your branch." : "Filter by branch below."}
+              {isBranchStaff ? "End users (name + phone) at your branch." : "Filter by branch below. Store → Branch → Customers."}
             </CardDescription>
             {!isBranchStaff && branches.length > 0 && (
               <div className="pt-2">

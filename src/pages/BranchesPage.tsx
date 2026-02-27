@@ -25,6 +25,7 @@ import type { Branch } from "@/types/shop";
 
 interface BranchStaffItem {
   id: string;
+  phone: string;
   email: string | null;
   createdAt: string;
   branch: { id: string; name: string; location: string; shop?: { name: string } };
@@ -39,8 +40,7 @@ export function BranchesPage() {
   const [branchLocation, setBranchLocation] = useState("");
   const [branchShopId, setBranchShopId] = useState("");
   const [staffBranchId, setStaffBranchId] = useState("");
-  const [staffEmail, setStaffEmail] = useState("");
-  const [staffPassword, setStaffPassword] = useState("");
+  const [staffPhone, setStaffPhone] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
@@ -102,13 +102,11 @@ export function BranchesPage() {
     try {
       await api.post("/auth/branch-staff", {
         branchId: staffBranchId,
-        email: staffEmail,
-        password: staffPassword,
+        phone: staffPhone,
       });
       setStaffBranchId("");
-      setStaffEmail("");
-      setStaffPassword("");
-      setMessage("Branch staff created. They can log in with email/password and manage customers for that branch.");
+      setStaffPhone("");
+      setMessage("Branch staff created. They sign in with this phone (OTP) and can add end users (name + phone) for that branch.");
       toast.success("Branch staff created.");
       loadBranchStaff();
     } catch (err) {
@@ -221,7 +219,7 @@ export function BranchesPage() {
         <Card className="card-hover">
           <CardHeader>
             <CardTitle>Add Branch Staff</CardTitle>
-            <CardDescription>Create a branch-level login. They can add customers for that branch only.</CardDescription>
+            <CardDescription>Create staff by phone. They sign in with this phone (OTP) and add end users (name + phone) for that branch. Relation: Store → Branch → Staff & Customers.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreateBranchStaff} className="space-y-5">
@@ -241,24 +239,13 @@ export function BranchesPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="staff-email">Email</Label>
+                <Label htmlFor="staff-phone">Phone number</Label>
                 <Input
-                  id="staff-email"
-                  type="email"
-                  placeholder="staff@example.com"
-                  value={staffEmail}
-                  onChange={(e) => setStaffEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="staff-password">Password</Label>
-                <Input
-                  id="staff-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={staffPassword}
-                  onChange={(e) => setStaffPassword(e.target.value)}
+                  id="staff-phone"
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  value={staffPhone}
+                  onChange={(e) => setStaffPhone(e.target.value)}
                   required
                 />
               </div>
@@ -271,7 +258,7 @@ export function BranchesPage() {
         <Card className="card-hover flex flex-col">
           <CardHeader>
             <CardTitle>Branch Staff</CardTitle>
-            <CardDescription>Users who can log in and manage customers for a specific branch.</CardDescription>
+            <CardDescription>Staff who sign in with phone (OTP) and add end users at branch level (Store → Branch).</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 pt-0">
             <ul className="list-card">
@@ -280,7 +267,7 @@ export function BranchesPage() {
               ) : (
                 branchStaff.map((s) => (
                   <li key={s.id} className="text-sm">
-                    <span className="font-medium text-foreground">{s.email ?? s.id}</span>
+                    <span className="font-medium text-foreground">{s.phone}{s.email ? ` · ${s.email}` : ""}</span>
                     <span className="text-muted-foreground">
                       {s.branch?.name} · {s.branch?.location}
                       {s.branch?.shop && ` · ${s.branch.shop.name}`}
