@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Customer } from "@/types/shop";
 import type { Branch } from "@/types/shop";
 
@@ -36,6 +37,8 @@ export function CustomersPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [filterBranchId, setFilterBranchId] = useState<string>("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState<{ title: string; description: string; onConfirm: () => Promise<void> } | null>(null);
 
   const isBranchStaff = user?.role === "BRANCH_STAFF";
   const isStoreAdmin = user?.role === "STORE_ADMIN";
@@ -62,15 +65,8 @@ export function CustomersPage() {
     loadBranches();
   }, [isSuperAdmin, isStoreAdmin]);
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doCreateCustomer = async () => {
     setMessage("");
-    const phoneErr = phoneErrorMessage(phone);
-    if (phoneErr) {
-      setMessage(phoneErr);
-      toast.error(phoneErr);
-      return;
-    }
     setLoading(true);
     try {
       await api.post("/customers", {
@@ -93,6 +89,22 @@ export function CustomersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    const phoneErr = phoneErrorMessage(phone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
+    setConfirmPayload({
+      title: "Add customer?",
+      description: "Are you sure you want to add this customer?",
+      onConfirm: doCreateCustomer,
+    });
+    setConfirmOpen(true);
   };
 
   if (!canManage) {
@@ -242,6 +254,19 @@ export function CustomersPage() {
           {message}
         </motion.p>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setConfirmPayload(null);
+        }}
+        title={confirmPayload?.title ?? ""}
+        description={confirmPayload?.description}
+        confirmLabel="Confirm"
+        onConfirm={confirmPayload?.onConfirm ?? (async () => {})}
+        loading={loading}
+      />
     </motion.div>
   );
 }

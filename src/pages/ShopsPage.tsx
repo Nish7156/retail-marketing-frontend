@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Shop } from "@/types/shop";
 
 export function ShopsPage() {
@@ -21,6 +22,8 @@ export function ShopsPage() {
   const [shopName, setShopName] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState<{ title: string; description: string; onConfirm: () => Promise<void> } | null>(null);
 
   const isSuperAdmin = user?.role === "SUPERADMIN";
 
@@ -33,8 +36,7 @@ export function ShopsPage() {
     loadShops();
   }, [isSuperAdmin]);
 
-  const handleCreateShop = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doCreateShop = async () => {
     setMessage("");
     setLoading(true);
     try {
@@ -50,6 +52,16 @@ export function ShopsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateShop = (e: React.FormEvent) => {
+    e.preventDefault();
+    setConfirmPayload({
+      title: "Create shop?",
+      description: "Are you sure you want to create this shop?",
+      onConfirm: doCreateShop,
+    });
+    setConfirmOpen(true);
   };
 
   if (!isSuperAdmin) {
@@ -137,6 +149,18 @@ export function ShopsPage() {
           {message}
         </motion.p>
       )}
+    <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setConfirmPayload(null);
+        }}
+        title={confirmPayload?.title ?? ""}
+        description={confirmPayload?.description}
+        confirmLabel="Confirm"
+        onConfirm={confirmPayload?.onConfirm ?? (async () => {})}
+        loading={loading}
+      />
     </motion.div>
   );
 }

@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Shop } from "@/types/shop";
 import type { Branch } from "@/types/shop";
 
@@ -46,6 +47,8 @@ export function BranchesPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState<{ title: string; description: string; onConfirm: () => Promise<void> } | null>(null);
 
   const isSuperAdmin = user?.role === "SUPERADMIN";
   const isStoreAdmin = user?.role === "STORE_ADMIN";
@@ -74,8 +77,7 @@ export function BranchesPage() {
     loadBranchStaff();
   }, [isSuperAdmin, isStoreAdmin]);
 
-  const handleCreateBranch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doCreateBranch = async () => {
     setMessage("");
     setLoading(true);
     try {
@@ -97,15 +99,18 @@ export function BranchesPage() {
     }
   };
 
-  const handleCreateBranchStaff = async (e: React.FormEvent) => {
+  const handleCreateBranch = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmPayload({
+      title: "Create branch?",
+      description: "Are you sure you want to create this branch?",
+      onConfirm: doCreateBranch,
+    });
+    setConfirmOpen(true);
+  };
+
+  const doCreateBranchStaff = async () => {
     setMessage("");
-    const phoneErr = phoneErrorMessage(staffPhone);
-    if (phoneErr) {
-      setMessage(phoneErr);
-      toast.error(phoneErr);
-      return;
-    }
     setStaffLoading(true);
     try {
       await api.post("/auth/branch-staff", {
@@ -124,6 +129,22 @@ export function BranchesPage() {
     } finally {
       setStaffLoading(false);
     }
+  };
+
+  const handleCreateBranchStaff = (e: React.FormEvent) => {
+    e.preventDefault();
+    const phoneErr = phoneErrorMessage(staffPhone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
+    setConfirmPayload({
+      title: "Create branch staff?",
+      description: "Are you sure you want to add this staff member?",
+      onConfirm: doCreateBranchStaff,
+    });
+    setConfirmOpen(true);
   };
 
   const canManage = isSuperAdmin || isStoreAdmin;
@@ -299,6 +320,19 @@ export function BranchesPage() {
           {message}
         </motion.p>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setConfirmPayload(null);
+        }}
+        title={confirmPayload?.title ?? ""}
+        description={confirmPayload?.description}
+        confirmLabel="Confirm"
+        onConfirm={confirmPayload?.onConfirm ?? (async () => {})}
+        loading={loading || staffLoading}
+      />
     </motion.div>
   );
 }

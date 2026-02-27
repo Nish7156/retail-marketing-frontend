@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Branch } from "@/types/shop";
 import type { Offer } from "@/types/shop";
 
@@ -32,6 +33,8 @@ export function OffersPage() {
   const [offerBranchId, setOfferBranchId] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState<{ title: string; description: string; onConfirm: () => Promise<void> } | null>(null);
 
   const isSuperAdmin = user?.role === "SUPERADMIN";
   const isStoreAdmin = user?.role === "STORE_ADMIN";
@@ -50,8 +53,7 @@ export function OffersPage() {
     loadOffers();
   }, [isSuperAdmin, isStoreAdmin]);
 
-  const handleCreateOffer = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doCreateOffer = async () => {
     setMessage("");
     setLoading(true);
     try {
@@ -73,6 +75,16 @@ export function OffersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateOffer = (e: React.FormEvent) => {
+    e.preventDefault();
+    setConfirmPayload({
+      title: "Create offer?",
+      description: "Are you sure you want to create this offer?",
+      onConfirm: doCreateOffer,
+    });
+    setConfirmOpen(true);
   };
 
   const canManage = isSuperAdmin || isStoreAdmin;
@@ -184,6 +196,19 @@ export function OffersPage() {
           {message}
         </motion.p>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setConfirmPayload(null);
+        }}
+        title={confirmPayload?.title ?? ""}
+        description={confirmPayload?.description}
+        confirmLabel="Confirm"
+        onConfirm={confirmPayload?.onConfirm ?? (async () => {})}
+        loading={loading}
+      />
     </motion.div>
   );
 }

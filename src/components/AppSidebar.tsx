@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types/auth";
 
@@ -32,6 +34,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
   const { user, logout } = useAuth();
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const navItems = navItemsConfig.filter((item) => user?.role && item.allowedRoles.includes(user.role));
 
   const content = (
@@ -85,12 +88,21 @@ export function AppSidebar({ onClose, isMobile = false }: AppSidebarProps) {
           variant="ghost"
           size="sm"
           className="w-full justify-start gap-3 rounded-xl text-white/70 hover:bg-red-500/15 hover:text-red-400"
-          onClick={() => logout()}
+          onClick={() => setLogoutConfirmOpen(true)}
         >
           <LogOut className="h-4 w-4" />
           Logout
         </Button>
       </div>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title="Log out?"
+        description="Are you sure you want to sign out?"
+        confirmLabel="Log out"
+        onConfirm={logout}
+      />
     </div>
   );
 

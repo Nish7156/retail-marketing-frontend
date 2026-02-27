@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Shop } from "@/types/shop";
 import type { ShopOwner } from "@/types/shop";
 
@@ -34,6 +35,8 @@ export function ShopOwnersPage() {
   const [addOwnerPhone, setAddOwnerPhone] = useState(PHONE_DEFAULT);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState<{ title: string; description: string; onConfirm: () => Promise<void> } | null>(null);
 
   const isSuperAdmin = user?.role === "SUPERADMIN";
 
@@ -51,15 +54,8 @@ export function ShopOwnersPage() {
     loadShopOwners();
   }, [isSuperAdmin]);
 
-  const handleCreateShopOwner = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doCreateShopOwner = async () => {
     setMessage("");
-    const phoneErr = phoneErrorMessage(ownerPhone);
-    if (phoneErr) {
-      setMessage(phoneErr);
-      toast.error(phoneErr);
-      return;
-    }
     setLoading(true);
     try {
       await api.post("/auth/store-owners", {
@@ -80,15 +76,24 @@ export function ShopOwnersPage() {
     }
   };
 
-  const handleAddOwnerToShop = async (e: React.FormEvent) => {
+  const handleCreateShopOwner = (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
-    const phoneErr = phoneErrorMessage(addOwnerPhone);
+    const phoneErr = phoneErrorMessage(ownerPhone);
     if (phoneErr) {
       setMessage(phoneErr);
       toast.error(phoneErr);
       return;
     }
+    setConfirmPayload({
+      title: "Create shop owner?",
+      description: "Are you sure you want to create this shop owner?",
+      onConfirm: doCreateShopOwner,
+    });
+    setConfirmOpen(true);
+  };
+
+  const doAddOwnerToShop = async () => {
+    setMessage("");
     setLoading(true);
     try {
       await api.post(`/shops/${addOwnerShopId}/owners`, { phone: getPhoneForApi(addOwnerPhone) });
@@ -104,6 +109,22 @@ export function ShopOwnersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddOwnerToShop = (e: React.FormEvent) => {
+    e.preventDefault();
+    const phoneErr = phoneErrorMessage(addOwnerPhone);
+    if (phoneErr) {
+      setMessage(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
+    setConfirmPayload({
+      title: "Add owner to shop?",
+      description: "Are you sure you want to add this owner to the shop?",
+      onConfirm: doAddOwnerToShop,
+    });
+    setConfirmOpen(true);
   };
 
   if (!isSuperAdmin) {
@@ -238,6 +259,19 @@ export function ShopOwnersPage() {
           {message}
         </motion.p>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) setConfirmPayload(null);
+        }}
+        title={confirmPayload?.title ?? ""}
+        description={confirmPayload?.description}
+        confirmLabel="Confirm"
+        onConfirm={confirmPayload?.onConfirm ?? (async () => {})}
+        loading={loading}
+      />
     </motion.div>
   );
 }
